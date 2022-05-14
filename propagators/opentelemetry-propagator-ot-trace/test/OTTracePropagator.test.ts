@@ -44,22 +44,6 @@ describe('OTTracePropagator', () => {
   });
 
   describe('.inject()', () => {
-    it('truncates trace id to 64bits', () => {
-      const spanContext: SpanContext = {
-        traceId: '80f198ee56343ba864fe8b2a57d3eff7',
-        spanId: 'e457b5a2e4d86bd1',
-        traceFlags: TraceFlags.NONE,
-      };
-
-      propagator.inject(
-        trace.setSpan(ROOT_CONTEXT, trace.wrapSpanContext(spanContext)),
-        carrier,
-        defaultTextMapSetter
-      );
-
-      assert.strictEqual(carrier[OT_TRACE_ID_HEADER], '64fe8b2a57d3eff7');
-    });
-
     it('injects context with sampled trace flags', () => {
       const spanContext: SpanContext = {
         traceId: '80f198ee56343ba864fe8b2a57d3eff7',
@@ -73,7 +57,7 @@ describe('OTTracePropagator', () => {
         defaultTextMapSetter
       );
 
-      assert.strictEqual(carrier[OT_TRACE_ID_HEADER], '64fe8b2a57d3eff7');
+      assert.strictEqual(carrier[OT_TRACE_ID_HEADER], spanContext.traceId);
       assert.strictEqual(carrier[OT_SPAN_ID_HEADER], 'e457b5a2e4d86bd1');
       assert.strictEqual(carrier[OT_SAMPLED_HEADER], 'true');
     });
@@ -91,7 +75,7 @@ describe('OTTracePropagator', () => {
         defaultTextMapSetter
       );
 
-      assert.strictEqual(carrier[OT_TRACE_ID_HEADER], '64fe8b2a57d3eff7');
+      assert.strictEqual(carrier[OT_TRACE_ID_HEADER], spanContext.traceId);
       assert.strictEqual(carrier[OT_SPAN_ID_HEADER], 'e457b5a2e4d86bd1');
       assert.strictEqual(carrier[OT_SAMPLED_HEADER], 'false');
     });
